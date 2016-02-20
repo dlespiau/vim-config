@@ -18,13 +18,15 @@ set smartindent                 " if you like ai you'll want this one
 
 set viminfo='20,\"50		" read/write a .viminfo file, don't store more
 				" than 50 lines of registers
-set history=50			" keep 50 lines of command line history
+set lazyredraw
+set history=1000		" keep 1000 lines of command line history
 set ruler			" show the cursor position all the time
+set laststatus=2
 set showcmd			" show (partial) command in status line.
 
 set wildmode=list:longest	" tab completion behaviour: mimic bash
 set wildmenu
-set wildignore=*.o,*.lo		" ignore object files
+set wildignore=*.o,*.lo,*.pyc,*.rej
 set autowrite			" automatically save before commands like
 				" :next and :make
 set hidden			" hide buffers when they are abandoned
@@ -41,6 +43,9 @@ set secure			" disable any unsafe commands in .exrc files
 
 set noswapfile
 
+set t_Co=16			" allow color schemes to do bright colors
+				" without forcing bold.
+
 set cinoptions=:0,t0,(0,u0,w1,m1
 
 if has("autocmd")
@@ -51,7 +56,20 @@ if has("autocmd")
   \ endif
 
   " highlight characters > 80
-  autocmd BufNewFile,BufRead *.c exec 'match Todo /\%>' . 80 . 'v.\+/'
+  autocmd BufNewFile,BufRead *.c,*.py exec 'match Todo /\%>' . 80 . 'v.\+/'
+
+
+  " PEP8
+  au BufNewFile,BufRead *.py call SetPythonOptions()
+  function SetPythonOptions()
+    set tabstop=4
+    set softtabstop=4
+    set shiftwidth=4
+    set textwidth=79
+    set expandtab
+    set autoindent
+    set fileformat=unix
+  endfunction
 
   " Indentation rules for Makefiles
   " optional: list lcs=tab:>-,trail:x
@@ -69,9 +87,24 @@ endif
 
 autocmd FileType gitcommit setlocal spell
 
+" Load matchit.vim, but only if the user hasn't installed a newer version.
+if !exists('g:loaded_matchit') && findfile('plugin/matchit.vim', &rtp) ==# ''
+  runtime! macros/matchit.vim
+endif
+
 ""
 " Align arguments
 nmap ,a :GNOMEAlignArguments<CR>
+
+"split navigations
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+" errors
+nnoremap <F10> :lnext<CR>
+nnoremap <F9>  :lprevious<CR>
 
 " append :e with the path of current buffer
 if has("unix")
@@ -85,3 +118,44 @@ endif
 
 " comment out a block of code
 vmap out "zdmzO#if 0<ESC>"zp'zi#endif<CR><ESC>
+
+""
+" Python
+
+let python_highlight_all = 1
+
+""
+" Plugins
+
+call plug#begin('~/.vim/plugged')
+Plug 'tpope/vim-fugitive'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'majutsushi/tagbar'
+Plug 'vim-scripts/indentpython.vim'
+Plug 'Valloric/YouCompleteMe'
+Plug 'scrooloose/syntastic'
+call plug#end()
+
+" TagBar
+nmap <C-E> :TagbarToggle<CR>
+
+" YouCompleteMe
+let g:ycm_autoclose_preview_window_after_completion=1
+map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+
+" python with virtualenv support
+py << EOF
+import os
+import sys
+if 'VIRTUAL_ENV' in os.environ:
+  project_base_dir = os.environ['VIRTUAL_ENV']
+  activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
+  execfile(activate_this, dict(__file__=activate_this))
+EOF
+
+" Syntastic
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 1
+let g:syntastic_always_populate_loc_list = 1
+" pylint is just too much crap without proper ignore list
+let g:syntastic_python_checkers = ['flake8']
