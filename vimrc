@@ -102,6 +102,13 @@ nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
+" git grep
+nnoremap <C-F> :Ggrep <cword><CR>
+
+" previous/next buffer
+nnoremap <A-Right> :bnext<CR>
+nnoremap <A-Left> :bprevious<CR>
+
 " errors
 nnoremap <F10> :lnext<CR>
 nnoremap <F9>  :lprevious<CR>
