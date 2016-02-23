@@ -134,6 +134,8 @@ Plug 'majutsushi/tagbar'
 Plug 'vim-scripts/indentpython.vim'
 Plug 'Valloric/YouCompleteMe'
 Plug 'scrooloose/syntastic'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 call plug#end()
 
 " TagBar
@@ -159,3 +161,34 @@ let g:syntastic_check_on_wq = 1
 let g:syntastic_always_populate_loc_list = 1
 " pylint is just too much crap without proper ignore list
 let g:syntastic_python_checkers = ['flake8']
+
+" Airline
+let g:airline_theme = 'wombat'
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#show_buffers = 1
+let g:airline#extensions#tabline#show_tabs = 0
+let g:airline#extensions#tabline#show_tab_type = 0
+let g:airline#extensions#tabline#buffer_min_count = 2
+let g:airline#extensions#whitespace#enabled = 0
+let g:airline#extensions#wordcount#enabled = 0
+let g:airline#extensions#virtualenv#enabled = 0
+
+" Need to install the powerline patches fonts for this
+let g:airline_powerline_fonts = 1
+
+function! AirLineConfiguration()
+  function! Modified()
+    return &modified ? " +" : ''
+  endfunction
+
+  call airline#parts#define_function('modified', 'Modified')
+
+  let g:airline_section_b = airline#section#create(['branch'])
+  let g:airline_section_c = airline#section#create_left(['%t'])
+  let g:airline_section_gutter = airline#section#create(['modified', '%='])
+  let g:airline_section_x = airline#section#create_right([''])
+  let g:airline_section_y = airline#section#create_right([''])
+  let g:airline_section_z =  airline#section#create_right(['%l,%c'])
+endfunction
+
+autocmd Vimenter * call AirLineConfiguration()
