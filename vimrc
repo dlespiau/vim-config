@@ -19,6 +19,7 @@ set smartindent                 " if you like ai you'll want this one
 set viminfo='20,\"50		" read/write a .viminfo file, don't store more
 				" than 50 lines of registers
 set lazyredraw
+set ttyfast
 set history=1000		" keep 1000 lines of command line history
 set ruler			" show the cursor position all the time
 set laststatus=2
@@ -43,8 +44,7 @@ set secure			" disable any unsafe commands in .exrc files
 
 set noswapfile
 
-set t_Co=16			" allow color schemes to do bright colors
-				" without forcing bold.
+set t_Co=256			" 256 colors
 
 set cinoptions=:0,t0,(0,u0,w1,m1
 
