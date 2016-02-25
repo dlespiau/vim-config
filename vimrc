@@ -136,10 +136,10 @@ let python_highlight_all = 1
 
 call plug#begin('~/.vim/plugged')
 Plug 'tpope/vim-fugitive'
-Plug 'ctrlpvim/ctrlp.vim'
+Plug 'wincent/command-t', { 'tag': '1.4', 'do' : 'cd ruby/command-t; make clean; ruby extconf.rb && make' }
 Plug 'majutsushi/tagbar'
 Plug 'vim-scripts/indentpython.vim'
-Plug 'Valloric/YouCompleteMe'
+Plug 'Valloric/YouCompleteMe', { 'do' : './install.py' }
 Plug 'scrooloose/syntastic'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
